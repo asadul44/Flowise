@@ -35,3 +35,16 @@ jobs:
             - run: yarn lint
 
             - run: yarn build
+            - name: Docker Login
+              uses: docker/login-action@v1
+              with:
+                  username: ${{ secrets.DOCKER_HUB_USERNAME }}
+                  password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+            # Build and Push Docker Image
+            - name: Build and Push Docker Image
+              uses: docker/build-push-action@v2
+              with:
+                  context: .
+                  push: true
+                  tags: asadul/flowise
