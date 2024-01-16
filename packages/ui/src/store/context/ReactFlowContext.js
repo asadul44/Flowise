@@ -21,12 +21,12 @@ export const ReactFlowContext = ({ children }) => {
     const [undoStack, setUndoStack] = useState([])
     const [redoStack, setRedoStack] = useState([])
 
-    const recordState = () => {
-        const currentNodes = reactFlowInstance.getNodes()
-        const currentEdges = reactFlowInstance.getEdges()
-        setUndoStack([...undoStack, { nodes: currentNodes, edges: currentEdges }])
-        setRedoStack([]) // Clear redo stack on new action
-    }
+    // const recordState = () => {
+    //     const currentNodes = reactFlowInstance.getNodes()
+    //     const currentEdges = reactFlowInstance.getEdges()
+    //     setUndoStack([...undoStack, { nodes: currentNodes, edges: currentEdges }])
+    //     setRedoStack([]) // Clear redo stack on new action
+    // }
     const deleteNode = (nodeid) => {
         deleteConnectedInput(nodeid, 'node')
         reactFlowInstance.setNodes(reactFlowInstance.getNodes().filter((n) => n.id !== nodeid))
@@ -148,9 +148,7 @@ export const ReactFlowContext = ({ children }) => {
         }
     }
     const undo = () => {
-        console.log('reactFlowInstance', reactFlowInstance)
         const lastState = undoStack.pop()
-
         if (lastState) {
             const currentState = {
                 nodes: reactFlowInstance.getNodes(),
