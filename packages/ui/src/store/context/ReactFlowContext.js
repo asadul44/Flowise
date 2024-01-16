@@ -18,7 +18,15 @@ export const flowContext = createContext(initialValue)
 export const ReactFlowContext = ({ children }) => {
     const dispatch = useDispatch()
     const [reactFlowInstance, setReactFlowInstance] = useState(null)
+    const [undoStack, setUndoStack] = useState([])
+    const [redoStack, setRedoStack] = useState([])
 
+    const recordState = () => {
+        const currentNodes = reactFlowInstance.getNodes()
+        const currentEdges = reactFlowInstance.getEdges()
+        setUndoStack([...undoStack, { nodes: currentNodes, edges: currentEdges }])
+        setRedoStack([]) // Clear redo stack on new action
+    }
     const deleteNode = (nodeid) => {
         deleteConnectedInput(nodeid, 'node')
         reactFlowInstance.setNodes(reactFlowInstance.getNodes().filter((n) => n.id !== nodeid))
@@ -139,7 +147,36 @@ export const ReactFlowContext = ({ children }) => {
             dispatch({ type: SET_DIRTY })
         }
     }
+    const undo = () => {
+        console.log('reactFlowInstance', reactFlowInstance)
+        const lastState = undoStack.pop()
 
+        if (lastState) {
+            const currentState = {
+                nodes: reactFlowInstance.getNodes(),
+                edges: reactFlowInstance.getEdges()
+            }
+
+            setRedoStack([...redoStack, currentState])
+            reactFlowInstance.setNodes(lastState.nodes)
+            reactFlowInstance.setEdges(lastState.edges)
+            dispatch({ type: SET_DIRTY })
+        }
+    }
+
+    const redo = () => {
+        const nextState = redoStack.pop()
+        if (nextState) {
+            const currentState = {
+                nodes: reactFlowInstance.getNodes(),
+                edges: reactFlowInstance.getEdges()
+            }
+            setUndoStack([...undoStack, currentState])
+            reactFlowInstance.setNodes(nextState.nodes)
+            reactFlowInstance.setEdges(nextState.edges)
+            dispatch({ type: SET_DIRTY })
+        }
+    }
     return (
         <flowContext.Provider
             value={{
@@ -147,7 +184,9 @@ export const ReactFlowContext = ({ children }) => {
                 setReactFlowInstance,
                 deleteNode,
                 deleteEdge,
-                duplicateNode
+                duplicateNode,
+                undo,
+                redo
             }}
         >
             {children}

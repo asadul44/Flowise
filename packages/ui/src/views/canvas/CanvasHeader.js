@@ -31,7 +31,7 @@ import { SET_CHATFLOW } from 'store/actions'
 
 // ==============================|| CANVAS HEADER ||============================== //
 
-const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFlow }) => {
+const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFlow, undo, redo }) => {
     const theme = useTheme()
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -302,6 +302,10 @@ const CanvasHeader = ({ chatflow, handleSaveFlow, handleDeleteFlow, handleLoadFl
                     </Stack>
                 )}
             </Box>
+            {/* <Box>
+                <Button onClick={undo()}>undo</Button>
+                <Button onClick={redo()}>redo</Button>
+            </Box> */}
             <Box>
                 {chatflow?.id && (
                     <ButtonBase title='API Endpoint' sx={{ borderRadius: '50%', mr: 2 }}>
@@ -404,7 +408,9 @@ CanvasHeader.propTypes = {
     chatflow: PropTypes.object,
     handleSaveFlow: PropTypes.func,
     handleDeleteFlow: PropTypes.func,
-    handleLoadFlow: PropTypes.func
+    handleLoadFlow: PropTypes.func,
+    undo: PropTypes.func,
+    redo: PropTypes.func
 }
 
 export default CanvasHeader

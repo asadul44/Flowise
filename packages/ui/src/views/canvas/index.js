@@ -70,6 +70,7 @@ const Canvas = () => {
 
     const { reactFlowInstance, setReactFlowInstance } = useContext(flowContext)
 
+    const { redo, undo } = useContext(flowContext)
     // ==============================|| Snackbar ||============================== //
 
     useNotifier()
@@ -505,6 +506,8 @@ const Canvas = () => {
                             handleSaveFlow={handleSaveFlow}
                             handleDeleteFlow={handleDeleteFlow}
                             handleLoadFlow={handleLoadFlow}
+                            undo={undo}
+                            redo={redo}
                         />
                     </Toolbar>
                 </AppBar>
