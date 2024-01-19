@@ -65,6 +65,7 @@ import axios from 'axios'
 import { Client } from 'langchainhub'
 import { parsePrompt } from './utils/hub'
 import { Variable } from './database/entities/Variable'
+import { User } from './database/entities/User'
 
 export class App {
     app: express.Application
@@ -148,7 +149,10 @@ export class App {
                 '/api/v1/components-credentials-icon/',
                 '/api/v1/chatflows-streaming',
                 '/api/v1/openai-assistants-file',
-                '/api/v1/ip'
+                '/api/v1/ip',
+                '/api/v1/user',
+                '/api/v1/chatmessage/user',
+                '/api/v1/chatmessage/message'
             ]
             this.app.use((req, res, next) => {
                 if (req.url.includes('/api/v1/')) {
@@ -556,6 +560,51 @@ export class App {
             return res.json(results)
         })
 
+        this.app.get('/api/v1/chatmessage/user/:id', async (req: Request, res: Response) => {
+            const chatId = req.params.id
+            try {
+                const chatmessage = await getDataSource()
+                    .getRepository(ChatMessage)
+                    .find({
+                        where: {
+                            chatId: chatId
+                        },
+                        order: {
+                            createdDate: 'ASC' // Replace 'createdDate' with the field you want to sort by
+                        }
+                    })
+
+                return res.json(chatmessage)
+            } catch (error) {
+                console.log(error, 'errror')
+
+                return res.status(500).send('Internal Server Error')
+            }
+        })
+
+        this.app.put('/api/v1/chatmessage/message/:id', async (req: Request, res: Response) => {
+            const messageId = req.params.id
+            try {
+                const chatmessage = await this.AppDataSource.getRepository(ChatMessage).findOneBy({
+                    id: messageId
+                })
+
+                if (!chatmessage) {
+                    res.status(404).send(`Message ${messageId} not found`)
+                    return
+                }
+                const body = req.body
+                const updateChatMessage = new ChatMessage()
+                Object.assign(updateChatMessage, body)
+
+                this.AppDataSource.getRepository(ChatMessage).merge(chatmessage, updateChatMessage)
+                const result = await this.AppDataSource.getRepository(ChatMessage).save(chatmessage)
+
+                return res.json(result)
+            } catch (error) {
+                console.log(error, 'errror')
+            }
+        })
         // ----------------------------------------
         // Credentials
         // ----------------------------------------
@@ -1143,6 +1192,7 @@ export class App {
             upload.array('files'),
             (req: Request, res: Response, next: NextFunction) => getRateLimiter(req, res, next),
             async (req: Request, res: Response) => {
+                console.log(req, 'res====================>')
                 await this.buildChatflow(req, res, socketIO)
             }
         )
@@ -1306,6 +1356,96 @@ export class App {
             }
         })
 
+        // create User
+
+        this.app.post('/api/v1/user/:id', async (req: Request, res: Response) => {
+            try {
+                const chatflowid = req.params.id
+                const body = req.body
+                const chatflow = await this.AppDataSource.getRepository(ChatFlow).findOneBy({
+                    id: chatflowid
+                })
+                if (!chatflow) return res.status(404).send(`Chatflow ${chatflowid} not found`)
+                const newUser = new User()
+                Object.assign(newUser, body)
+                const user = this.AppDataSource.getRepository(User).create(newUser)
+                const results = await this.AppDataSource.getRepository(User).save(user)
+                return res.json(results)
+            } catch (error) {
+                console.error(error)
+                return res.status(500).send('Internal server error')
+            }
+        })
+
+        // get all  User
+        this.app.get('/api/v1/user/:id', async (req: Request, res: Response) => {
+            const chatflowid = req.params.id
+            try {
+                const chatflow = await this.AppDataSource.getRepository(ChatFlow).findOneBy({
+                    id: chatflowid
+                })
+                if (!chatflow) return res.status(404).send(`Chatflow ${chatflowid} not found`)
+
+                const user = await getDataSource()
+                    .getRepository(User)
+                    .find({
+                        where: {
+                            chatflowid: chatflowid
+                        }
+                    })
+                if (!user) return res.status(200).send(`User not found`)
+                return res.json(user)
+            } catch (error) {
+                // Handle database or other errors
+                console.error(error)
+                return res.status(500).send('Internal server error')
+            }
+        })
+
+        // get   User by id
+        this.app.get('/api/v1/user/:id', async (req: Request, res: Response) => {
+            const userId = req.params.id
+            try {
+                const user = await getDataSource().getRepository(User).findOneBy({
+                    id: userId
+                })
+
+                if (!user) {
+                    return res.status(404).send(`User ${userId} not found`)
+                }
+
+                return res.json(user)
+            } catch (error) {
+                // Handle database or other errors
+                console.error(error)
+                return res.status(500).send('Internal server error')
+            }
+        })
+        // update   User by id
+        this.app.put('/api/v1/user/:id', async (req: Request, res: Response) => {
+            const userId = req.params.id
+            try {
+                const user = await getDataSource().getRepository(User).findOneBy({
+                    id: userId
+                })
+
+                if (!user) {
+                    return res.status(404).send(`User ${userId} not found`)
+                }
+
+                const body = req.body
+                const useData = new User()
+                Object.assign(useData, body)
+                this.AppDataSource.getRepository(User).merge(body, useData)
+                const result = await this.AppDataSource.getRepository(User).save(user)
+
+                return res.json(result)
+            } catch (error) {
+                // Handle database or other errors
+                console.error(error)
+                return res.status(500).send('Internal server error')
+            }
+        })
         // ----------------------------------------
         // Serve UI static
         // ----------------------------------------
@@ -1747,6 +1887,7 @@ export class App {
                 chatId,
                 memoryType,
                 sessionId,
+                user: incomingInput.userId,
                 createdDate: userMessageDateTime
             }
             await this.addChatMessage(userMessage)
@@ -1763,7 +1904,8 @@ export class App {
                 chatType: isInternal ? chatType.INTERNAL : chatType.EXTERNAL,
                 chatId,
                 memoryType,
-                sessionId
+                sessionId,
+                user: incomingInput.userId
             }
             if (result?.sourceDocuments) apiMessage.sourceDocuments = JSON.stringify(result.sourceDocuments)
             if (result?.usedTools) apiMessage.usedTools = JSON.stringify(result.usedTools)

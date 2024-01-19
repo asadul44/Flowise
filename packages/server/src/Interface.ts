@@ -9,6 +9,19 @@ export enum chatType {
 /**
  * Databases
  */
+export interface IUser {
+    id: string
+    name?: string
+    email: string
+    image?: string
+    phone?: string
+    company?: string
+    chatflowid: string
+    chatId: string
+    updatedDate: Date
+    createdDate: Date
+}
+
 export interface IChatFlow {
     id: string
     name: string
@@ -36,6 +49,7 @@ export interface IChatMessage {
     memoryType?: string
     sessionId?: string
     createdDate: Date
+    user?: string
 }
 
 export interface ITool {
@@ -176,6 +190,7 @@ export interface IncomingInput {
     socketIOClientId?: string
     chatId?: string
     stopNodeId?: string
+    userId?: string
 }
 
 export interface IActiveChatflows {
