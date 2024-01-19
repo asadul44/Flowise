@@ -576,8 +576,6 @@ export class App {
 
                 return res.json(chatmessage)
             } catch (error) {
-                console.log(error, 'errror')
-
                 return res.status(500).send('Internal Server Error')
             }
         })
@@ -602,7 +600,7 @@ export class App {
 
                 return res.json(result)
             } catch (error) {
-                console.log(error, 'errror')
+                return res.status(500).send('Internal Server Error')
             }
         })
         // ----------------------------------------
@@ -1192,7 +1190,6 @@ export class App {
             upload.array('files'),
             (req: Request, res: Response, next: NextFunction) => getRateLimiter(req, res, next),
             async (req: Request, res: Response) => {
-                console.log(req, 'res====================>')
                 await this.buildChatflow(req, res, socketIO)
             }
         )
@@ -1372,7 +1369,6 @@ export class App {
                 const results = await this.AppDataSource.getRepository(User).save(user)
                 return res.json(results)
             } catch (error) {
-                console.error(error)
                 return res.status(500).send('Internal server error')
             }
         })
@@ -1397,7 +1393,7 @@ export class App {
                 return res.json(user)
             } catch (error) {
                 // Handle database or other errors
-                console.error(error)
+
                 return res.status(500).send('Internal server error')
             }
         })
@@ -1417,7 +1413,7 @@ export class App {
                 return res.json(user)
             } catch (error) {
                 // Handle database or other errors
-                console.error(error)
+
                 return res.status(500).send('Internal server error')
             }
         })
@@ -1442,7 +1438,7 @@ export class App {
                 return res.json(result)
             } catch (error) {
                 // Handle database or other errors
-                console.error(error)
+
                 return res.status(500).send('Internal server error')
             }
         })
