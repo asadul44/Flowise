@@ -49,7 +49,7 @@ export interface IChatMessage {
     memoryType?: string
     sessionId?: string
     createdDate: Date
-    user?: string
+    user?: any
 }
 
 export interface ITool {
