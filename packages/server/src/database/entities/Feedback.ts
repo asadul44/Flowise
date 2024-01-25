@@ -1,27 +1,21 @@
 /* eslint-disable */
-import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, Index, OneToMany } from 'typeorm'
-import { IUser } from '../../Interface'
+import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, Index, OneToMany, ManyToOne } from 'typeorm'
+import { IFeedback } from '../../Interface'
 import { ChatMessage } from './ChatMessage'
-import { Feedback } from './Feedback'
+import { User } from './User'
 @Entity()
-export class User implements IUser {
+export class Feedback implements IFeedback {
     @PrimaryGeneratedColumn('uuid')
     id: string
 
     @Column()
-    name: string
+    key: string
 
     @Column()
-    email: string
+    score: number
 
     @Column({ nullable: true })
-    phone: string
-
-    @Column({ nullable: true })
-    company: string
-
-    @Column({ nullable: true })
-    image?: string
+    comment: string
 
     @Index()
     @Column()
@@ -40,6 +34,6 @@ export class User implements IUser {
     @OneToMany(() => ChatMessage, (chatMessage) => chatMessage.user)
     chatMessages: ChatMessage[]
 
-    @OneToMany(() => Feedback, (feedback) => feedback.user)
-    feedbacks: Feedback[]
+    @ManyToOne(() => User, (user) => user.feedbacks)
+    user: User
 }

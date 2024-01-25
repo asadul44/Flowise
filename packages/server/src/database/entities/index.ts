@@ -5,6 +5,8 @@ import { Tool } from './Tool'
 import { Assistant } from './Assistant'
 import { Variable } from './Variable'
 import { User } from './User'
+import { Admin } from './Admin'
+import { Feedback } from './Feedback'
 export const entities = {
     ChatFlow,
     ChatMessage,
@@ -12,5 +14,7 @@ export const entities = {
     Tool,
     Assistant,
     Variable,
-    User
+    User,
+    Admin,
+    Feedback
 }

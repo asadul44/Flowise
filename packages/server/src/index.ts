@@ -66,6 +66,8 @@ import { Client } from 'langchainhub'
 import { parsePrompt } from './utils/hub'
 import { Variable } from './database/entities/Variable'
 import { User } from './database/entities/User'
+import { Admin } from './database/entities/Admin'
+import { Feedback } from './database/entities/Feedback'
 
 export class App {
     app: express.Application
@@ -151,6 +153,8 @@ export class App {
                 '/api/v1/openai-assistants-file',
                 '/api/v1/ip',
                 '/api/v1/user',
+                '/api/v1/feedback',
+                '/api/v1/admin',
                 '/api/v1/chatmessage/user',
                 '/api/v1/chatmessage/message'
             ]
@@ -1439,6 +1443,78 @@ export class App {
             } catch (error) {
                 // Handle database or other errors
 
+                return res.status(500).send('Internal server error')
+            }
+        })
+
+        // Admin api
+        this.app.post('/api/v1/admin', async (req: Request, res: Response) => {
+            try {
+                const body = req.body
+                const newAdmin = new Admin()
+                Object.assign(newAdmin, body)
+                const admin = this.AppDataSource.getRepository(Admin).create(newAdmin)
+                const results = await this.AppDataSource.getRepository(Admin).save(admin)
+                return res.json(results)
+            } catch (error) {
+                return res.status(500).send('Internal server error')
+            }
+        })
+
+        this.app.get('/api/v1/admin', async (req: Request, res: Response) => {
+            try {
+                const results = await this.AppDataSource.getRepository(Admin).find()
+                return res.json(results)
+            } catch (error) {
+                return res.status(500).send('Internal server error')
+            }
+        })
+
+        this.app.get('/api/v1/admin/:id', async (req: Request, res: Response) => {
+            const adminId = req.params.id
+            try {
+                const admin = await this.AppDataSource.getRepository(Admin).findOneBy({ id: adminId })
+                if (!admin) {
+                    return res.status(404).send(`Admin ${adminId} not found`)
+                }
+                return res.json(admin)
+            } catch (error) {
+                return res.status(500).send('Internal server error')
+            }
+        })
+
+        //Feedback Api
+        this.app.post('/api/v1/feedback', async (req: Request, res: Response) => {
+            try {
+                const body = req.body
+                const newFeedback = new Feedback()
+                Object.assign(newFeedback, body)
+                const feedback = this.AppDataSource.getRepository(Feedback).create(newFeedback)
+                const results = await this.AppDataSource.getRepository(Feedback).save(feedback)
+                return res.json(results)
+            } catch (error) {
+                return res.status(500).send('Internal server error')
+            }
+        })
+
+        this.app.get('/api/v1/feedback', async (req: Request, res: Response) => {
+            try {
+                const results = await this.AppDataSource.getRepository(Feedback).find()
+                return res.json(results)
+            } catch (error) {
+                return res.status(500).send('Internal server error')
+            }
+        })
+
+        this.app.get('/api/v1/feedback/:id', async (req: Request, res: Response) => {
+            const feedbackId = req.params.id
+            try {
+                const feedback = await this.AppDataSource.getRepository(Feedback).findOneBy({ id: feedbackId })
+                if (!feedback) {
+                    return res.status(404).send(`Feedback ${feedbackId} not found`)
+                }
+                return res.json(feedback)
+            } catch (error) {
                 return res.status(500).send('Internal server error')
             }
         })

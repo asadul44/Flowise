@@ -9,6 +9,23 @@ export enum chatType {
 /**
  * Databases
  */
+export enum AdminRole {
+    DASHBOARD = 'dashboard',
+    SERVER = 'server'
+}
+
+export interface IAdmin {
+    id: string
+    email: string
+    password: string
+    comment?: string
+    permission?: string
+    role: AdminRole
+    avatar?: string
+    updatedDate: Date
+    createdDate: Date
+}
+
 export interface IUser {
     id: string
     name?: string
@@ -16,6 +33,17 @@ export interface IUser {
     image?: string
     phone?: string
     company?: string
+    chatflowid: string
+    chatId: string
+    updatedDate: Date
+    createdDate: Date
+}
+
+export interface IFeedback {
+    id: string
+    key: string
+    score: number
+    comment?: string
     chatflowid: string
     chatId: string
     updatedDate: Date
@@ -40,6 +68,7 @@ export interface IChatMessage {
     id: string
     role: MessageType
     content: string
+    trainingContent?: string
     chatflowid: string
     sourceDocuments?: string
     usedTools?: string

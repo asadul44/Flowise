@@ -41,6 +41,9 @@ export class ChatMessage implements IChatMessage {
     @CreateDateColumn()
     createdDate: Date
 
+    @Column({ nullable: true, type: 'text' })
+    trainingContent: string
+
     @ManyToOne(() => User, (user) => user.chatMessages)
     user: User
 }
