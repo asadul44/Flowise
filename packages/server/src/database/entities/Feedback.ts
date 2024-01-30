@@ -32,7 +32,7 @@ export class Feedback implements IFeedback {
     updatedDate: Date
 
     @OneToMany(() => ChatMessage, (chatMessage) => chatMessage.user)
-    chatMessages: ChatMessage[]
+    message: ChatMessage[]
 
     @ManyToOne(() => User, (user) => user.feedbacks)
     user: User
