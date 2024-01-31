@@ -1,7 +1,8 @@
 /* eslint-disable */
-import { Entity, Column, CreateDateColumn, PrimaryGeneratedColumn, Index, ManyToOne } from 'typeorm'
+import { Entity, Column, CreateDateColumn, PrimaryGeneratedColumn, Index, ManyToOne, OneToMany } from 'typeorm'
 import { IChatMessage, MessageType } from '../../Interface'
 import { User } from './User'
+import { Feedback } from './Feedback'
 @Entity()
 export class ChatMessage implements IChatMessage {
     @PrimaryGeneratedColumn('uuid')
@@ -43,6 +44,9 @@ export class ChatMessage implements IChatMessage {
 
     @Column({ nullable: true, type: 'text' })
     trainingContent: string
+
+    @OneToMany(() => Feedback, (feedback) => feedback.chatMessage)
+    feedbacks: Feedback[]
 
     @ManyToOne(() => User, (user) => user.chatMessages)
     user: User
