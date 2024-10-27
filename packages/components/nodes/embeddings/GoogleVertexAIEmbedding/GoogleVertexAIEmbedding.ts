@@ -58,7 +58,8 @@ class GoogleVertexAIEmbedding_Embeddings implements INode {
         const googleApplicationCredentialFilePath = getCredentialParam('googleApplicationCredentialFilePath', credentialData, nodeData)
         const googleApplicationCredential = getCredentialParam('googleApplicationCredential', credentialData, nodeData)
         const projectID = getCredentialParam('projectID', credentialData, nodeData)
-
+        const location = 'me-central2'
+        const endpoint = 'me-central2-aiplatform.googleapis.com'
         const authOptions: GoogleAuthOptions = {}
         if (Object.keys(credentialData).length !== 0) {
             if (!googleApplicationCredentialFilePath && !googleApplicationCredential)
@@ -77,7 +78,9 @@ class GoogleVertexAIEmbedding_Embeddings implements INode {
         }
         const obj: GoogleVertexAIEmbeddingsParams = {}
         if (modelName) obj.model = modelName
+        if (location) obj.location = location
         if (Object.keys(authOptions).length !== 0) obj.authOptions = authOptions
+        if (endpoint) obj.endpoint = endpoint
 
         const model = new GoogleVertexAIEmbeddings(obj)
         return model

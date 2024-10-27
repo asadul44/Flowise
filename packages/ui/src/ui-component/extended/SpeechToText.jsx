@@ -17,7 +17,7 @@ import { Dropdown } from '@/ui-component/dropdown/Dropdown'
 import openAISVG from '@/assets/images/openai.svg'
 import assemblyAIPng from '@/assets/images/assemblyai.png'
 import localAiPng from '@/assets/images/localai.png'
-
+import vertexAiPng from '@/assets/images/vertex-ai.png'
 // store
 import useNotifier from '@/utils/useNotifier'
 
@@ -29,7 +29,8 @@ import chatflowsApi from '@/api/chatflows'
 const SpeechToTextType = {
     OPENAI_WHISPER: 'openAIWhisper',
     ASSEMBLYAI_TRANSCRIBE: 'assemblyAiTranscribe',
-    LOCALAI_STT: 'localAISTT'
+    LOCALAI_STT: 'localAISTT',
+    GOOGLE_VERTEX_API: 'google_VERTEX_APITranscribe'
 }
 
 // Weird quirk - the key must match the name property value.
@@ -139,6 +140,45 @@ const speechToTextProviders = {
                 optional: true
             }
         ]
+    },
+    [SpeechToTextType.GOOGLE_VERTEX_API]: {
+        label: 'Vertex Ai',
+        name: SpeechToTextType.GOOGLE_VERTEX_API,
+        icon: vertexAiPng,
+        url: 'https://cloud.google.com/vertex-ai/',
+        inputs: [
+            {
+                label: 'Connect Credential',
+                name: 'credential',
+                type: 'credential',
+                credentialNames: ['googleVertexAuth']
+            },
+            {
+                label: 'Language',
+                name: 'language',
+                type: 'string',
+                description:
+                    'The language of the input audio. Supplying the input language in ISO-639-1 format will improve accuracy and latency.',
+                placeholder: 'en',
+                optional: true
+            },
+            {
+                label: 'Prompt',
+                name: 'prompt',
+                type: 'string',
+                rows: 4,
+                description: `An optional text to guide the model's style or continue a previous audio segment. The prompt should match the audio language.`,
+                optional: true
+            },
+            {
+                label: 'Temperature',
+                name: 'temperature',
+                type: 'number',
+                step: 0.1,
+                description: `The sampling temperature, between 0 and 1. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.`,
+                optional: true
+            }
+        ]
     }
 }
 
@@ -152,13 +192,15 @@ const SpeechToText = ({ dialogProps }) => {
 
     const [speechToText, setSpeechToText] = useState({})
     const [selectedProvider, setSelectedProvider] = useState('none')
-
+    console.log(selectedProvider, 'selectedProvider')
     const onSave = async () => {
         const speechToText = setValue(true, selectedProvider, 'status')
+        console.log(speechToText, 'speechToText..............')
         try {
             const saveResp = await chatflowsApi.updateChatflow(dialogProps.chatflow.id, {
                 speechToText: JSON.stringify(speechToText)
             })
+            console.log(saveResp, 'saveResp')
             if (saveResp.data) {
                 enqueueSnackbar({
                     message: 'Speech To Text Configuration Saved',

@@ -93,9 +93,11 @@ class GoogleVertexAI_ChatModels implements INode {
 
     async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
+        // console.log(credentialData,'credentialData..........................')
         const googleApplicationCredentialFilePath = getCredentialParam('googleApplicationCredentialFilePath', credentialData, nodeData)
         const googleApplicationCredential = getCredentialParam('googleApplicationCredential', credentialData, nodeData)
         const projectID = getCredentialParam('projectID', credentialData, nodeData)
+        const endpoint = 'me-central2-aiplatform.googleapis.com'
 
         const authOptions: ICommonObject = {}
         if (Object.keys(credentialData).length !== 0) {
@@ -120,10 +122,13 @@ class GoogleVertexAI_ChatModels implements INode {
         const topP = nodeData.inputs?.topP as string
         const cache = nodeData.inputs?.cache as BaseCache
         const topK = nodeData.inputs?.topK as string
+        // const location= nodeData.inputs?.location as string
 
         const obj: ChatVertexAIInput = {
             temperature: parseFloat(temperature),
-            model: modelName
+            model: modelName,
+            location: 'me-central2',
+            endpoint: endpoint
         }
         if (Object.keys(authOptions).length !== 0) obj.authOptions = authOptions
 
@@ -131,8 +136,9 @@ class GoogleVertexAI_ChatModels implements INode {
         if (topP) obj.topP = parseFloat(topP)
         if (cache) obj.cache = cache
         if (topK) obj.topK = parseFloat(topK)
-
+        // console.log(obj,'obj..........................',authOptions)
         const model = new ChatVertexAI(obj)
+        // console.log(model,'model..........................')
         return model
     }
 }
