@@ -192,10 +192,10 @@ const SpeechToText = ({ dialogProps }) => {
 
     const [speechToText, setSpeechToText] = useState({})
     const [selectedProvider, setSelectedProvider] = useState('none')
-    console.log(selectedProvider, 'selectedProvider')
+
     const onSave = async () => {
         const speechToText = setValue(true, selectedProvider, 'status')
-        console.log(speechToText, 'speechToText..............')
+
         try {
             const saveResp = await chatflowsApi.updateChatflow(dialogProps.chatflow.id, {
                 speechToText: JSON.stringify(speechToText)

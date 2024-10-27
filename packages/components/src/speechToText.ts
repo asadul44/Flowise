@@ -90,7 +90,7 @@ export const convertSpeechToText = async (upload: IFileUpload, speechToTextConfi
                 try {
                     const vertexAI = new VertexAI({
                         location: 'me-central2',
-                        project: 'test-first-project-432511'
+                        project: credentialData.projectID
                     })
 
                     const request = {
