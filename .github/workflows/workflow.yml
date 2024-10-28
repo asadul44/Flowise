@@ -22,19 +22,26 @@ jobs:
         env:
             PUPPETEER_SKIP_DOWNLOAD: true
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
+            - uses: pnpm/action-setup@v3
+              with:
+                  version: 9.0.4
             - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               with:
                   node-version: ${{ matrix.node-version }}
+                  check-latest: false
+                  cache: 'pnpm'
 
-            - run: npm i -g yarn
+            - run: npm i -g pnpm
 
-            - run: yarn install --ignore-engines
+            - run: pnpm install
 
-            - run: yarn lint
+            - run: ./node_modules/.bin/cypress install
 
-            - run: yarn build
+            - run: pnpm lint
+
+            - run: pnpm build
             - name: Docker Login
               uses: docker/login-action@v1
               with:
