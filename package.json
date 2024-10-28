@@ -12,19 +12,19 @@
     ],
     "scripts": {
         "build": "turbo run build",
-        "build-force": "pnpm clean && turbo run build --force",
+        "build-force": "turbo run build --force",
         "dev": "turbo run dev --parallel",
         "start": "run-script-os",
         "start:windows": "cd packages/server/bin && run start",
         "start:default": "cd packages/server/bin && ./run start",
-        "clean": "pnpm --filter \"./packages/**\" clean",
-        "nuke": "pnpm --filter \"./packages/**\" nuke && rimraf node_modules .turbo",
+        "clean": "npm --filter \"./packages/**\" clean",
+        "nuke": "npm --filter \"./packages/**\" nuke && rimraf node_modules .turbo",
         "format": "prettier --write \"**/*.{ts,tsx,md}\"",
         "lint": "eslint \"**/*.{js,jsx,ts,tsx,json,md}\"",
-        "lint-fix": "pnpm lint --fix",
+        "lint-fix": "yarn lint --fix",
         "quick": "pretty-quick --staged",
         "postinstall": "husky install",
-        "migration:create": "pnpm typeorm migration:create"
+        "migration:create": "yarn typeorm migration:create"
     },
     "lint-staged": {
         "*.{js,jsx,ts,tsx,json,md}": "eslint --fix"

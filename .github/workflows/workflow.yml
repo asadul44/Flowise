@@ -47,4 +47,4 @@ jobs:
               with:
                   context: .
                   push: true
-                  tags: asadul/flowise
+                  tags: asadul/flowise:1.0.0
