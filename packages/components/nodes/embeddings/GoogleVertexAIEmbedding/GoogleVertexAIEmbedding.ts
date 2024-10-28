@@ -40,7 +40,7 @@ class GoogleVertexAIEmbedding_Embeddings implements INode {
                 name: 'modelName',
                 type: 'asyncOptions',
                 loadMethod: 'listModels',
-                default: 'textembedding-gecko@001'
+                default: 'text-embedding-004'
             }
         ]
     }
@@ -54,7 +54,7 @@ class GoogleVertexAIEmbedding_Embeddings implements INode {
 
     async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
-        const modelName = nodeData.inputs?.modelName as string
+        const modelName = 'text-embedding-004'
         const googleApplicationCredentialFilePath = getCredentialParam('googleApplicationCredentialFilePath', credentialData, nodeData)
         const googleApplicationCredential = getCredentialParam('googleApplicationCredential', credentialData, nodeData)
         const projectID = getCredentialParam('projectID', credentialData, nodeData)
@@ -83,6 +83,7 @@ class GoogleVertexAIEmbedding_Embeddings implements INode {
         if (endpoint) obj.endpoint = endpoint
 
         const model = new GoogleVertexAIEmbeddings(obj)
+        console.log(model, 'model...........')
         return model
     }
 }
