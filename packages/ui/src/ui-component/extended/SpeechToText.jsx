@@ -200,7 +200,7 @@ const SpeechToText = ({ dialogProps }) => {
             const saveResp = await chatflowsApi.updateChatflow(dialogProps.chatflow.id, {
                 speechToText: JSON.stringify(speechToText)
             })
-            console.log(saveResp, 'saveResp')
+
             if (saveResp.data) {
                 enqueueSnackbar({
                     message: 'Speech To Text Configuration Saved',
@@ -277,7 +277,6 @@ const SpeechToText = ({ dialogProps }) => {
             } catch (e) {
                 setSpeechToText({})
                 setSelectedProvider('none')
-                console.error(e)
             }
         }
 
