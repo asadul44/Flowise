@@ -83,7 +83,7 @@ class GoogleVertexAIEmbedding_Embeddings implements INode {
         if (endpoint) obj.endpoint = endpoint
 
         const model = new GoogleVertexAIEmbeddings(obj)
-        console.log(model, 'model...........')
+
         return model
     }
 }

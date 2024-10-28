@@ -18,7 +18,7 @@ export const convertSpeechToText = async (upload: IFileUpload, speechToTextConfi
     if (speechToTextConfig) {
         const credentialId = speechToTextConfig.credentialId as string
         const credentialData = await getCredentialData(credentialId ?? '', options)
-        console.log(credentialData, credentialId, speechToTextConfig)
+        // console.log(credentialData, credentialId, speechToTextConfig)
         const audio_file = await getFileFromStorage(upload.name, options.chatflowid, options.chatId)
 
         switch (speechToTextConfig.name) {
@@ -107,7 +107,7 @@ export const convertSpeechToText = async (upload: IFileUpload, speechToTextConfi
                         .generateContentStream(request as any)
                     const contentResponse = await streamingResult.response
                     if (contentResponse && contentResponse.candidates && contentResponse.candidates.length > 0) {
-                        console.log(contentResponse.candidates[0].content.parts[0].text, '=<text')
+                        // console.log(contentResponse.candidates[0].content.parts[0].text, '=<text')
                         return contentResponse.candidates[0].content.parts[0].text
                     }
                 } catch (error) {
