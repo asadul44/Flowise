@@ -94,7 +94,9 @@ class GoogleVertexAI_ChatModels implements INode {
     async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
         // console.log(credentialData,'credentialData..........................')
+        // options.logger.log(credentialData,'credentialData')
         const googleApplicationCredentialFilePath = getCredentialParam('googleApplicationCredentialFilePath', credentialData, nodeData)
+        // console.log(googleApplicationCredentialFilePath,'googleApplicationCredentialFilePath')
         const googleApplicationCredential = getCredentialParam('googleApplicationCredential', credentialData, nodeData)
         const projectID = getCredentialParam('projectID', credentialData, nodeData)
         const endpoint = 'me-central2-aiplatform.googleapis.com'
